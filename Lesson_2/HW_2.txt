@@ -1,0 +1,66 @@
+ 1.	Решите на базе данных AdventureWorks2017 следующие задачи:
+-- a)	Извлечь все столбцы из таблицы Sales.SalesTerritory.
+
+        SELECT*
+        FROM AdventureWorks2017.Sales.SalesTerritory
+
+-- b)	Извлечь столбцы TerritoryID и Name из таблицы Sales.SalesTerritory.
+
+        SELECT TerritoryID
+        FROM AdventureWorks2017.Sales.SalesTerritory
+
+-- c)	Найдите все данные, которые существует для людей из Person.Person с LastName = ‘Norman’.
+
+        SELECT*
+        FROM AdventureWorks2017.Person.Person
+        WHERE LastName= 'Norman'
+
+-- d)	Найдите все строки из Person.Person, где EmailPromotion не равен 2. 
+
+        SELECT*
+        FROM AdventureWorks2017.Person.Person
+        WHERE EmailPromotion <> '2'
+
+-- 3.	На официальном сайте Microsoft ещё раз просмотрите синтаксис SUM, AVG, COUNT, MIN, MAX и примеры для каждой функции. 
+     -- Какие ещё агрегатные функции существуют в языке T-SQL? Приведите несколько примеров.
+
+     -- GROUPING - Указывает, является ли указанное выражение столбца в списке GROUP BY статистическим или нет.
+                -- В результирующем наборе функция GROUPING возвращает 1 (статистическое выражение) или ноль (нестатистическое выражение).
+
+     -- STDEV - Возвращает статистическое стандартное отклонение всех значений в указанном выражении.
+
+     -- STRING_AGG - Сцепляет значения строковых выражений, помещая между ними значения-разделители. В конце строки разделитель не добавляется.
+
+-- 4.	Решите на базе данных AdventureWorks2017 следующие задачи:
+-- a)	Сколько уникальных PersonType существует для людей из Person.Person с LastName начинающиеся с буквы М или не содержащий 1 в EmailPromotion.
+        
+	SELECT COUNT(DISTINCT PersonType)
+        FROM AdventureWorks2017.Person.Person
+        WHERE LastName LIKE '%M'
+
+-- b)	Вывести первых 3 специальных предложений из Sales.SpecialOffer с наибольшими DiscountPct, которые начинали действовать с 2013-01-01 по 2014-01-01.
+ 
+        USE AdventureWorks2017 	
+        SELECT TOP 3 *
+        FROM Sales.SpecialOffer
+        WHERE StartDate >= '2013-01-01' and EndDate <= '2014-01-01'
+        ORDER BY DiscountPct DESC
+  
+-- c)	Найти самый минимальный вес и самый максимальный размер продукта из Production.Product.
+
+        SELECT MAX (Size) AS MAX_SIZE, MIN (Weight) AS MIN_WEIGHT
+        FROM AdventureWorks2017.Production.Product
+		
+-- d)	Найти самый минимальный вес и самый максимальный размер продукта для каждой подкатегории ProductSubcategoryID из Production.Product. 
+
+        SELECT ProductSubcategoryID, MAX (Size) AS MAX_SIZE, MIN (Weight) AS MIN_WEIGHT
+        FROM AdventureWorks2017.Production.Product
+	GROUP BY ProductSubcategoryID
+		
+
+-- e)	Найти самый минимальный вес и самый максимальный размер продукта для каждой подкатегории ProductSubcategoryID из Production.Product, где цвет продукта определен(Color).
+
+        SELECT ProductSubcategoryID, MAX (Size) AS MAX_SIZE, MIN (Weight) AS MIN_WEIGHT
+        FROM AdventureWorks2017.Production.Product
+	WHERE Color is not NULL
+	GROUP BY ProductSubcategoryID
