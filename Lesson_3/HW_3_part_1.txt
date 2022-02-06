@@ -1,0 +1,85 @@
+/*2.Решите на базе данных AdventureWorks2017 следующие задачи */
+
+    /*a) Вывести список цен в виде текстового комментария, основанного на диапазоне цен для продукта: 
+	  a.StandardCost равен 0 или не определен – ‘Not for sale’    
+          b.StandardCost больше 0, но меньше 100 – ‘<$100’  
+	  c.StandardCost больше или равно 100, но меньше 500 - ‘ <$500'  
+          d.Иначе - ‘ >= $500' 
+          Вывести имя продукта и новое поле PriceRange. */
+
+USE AdventureWorks2017
+SELECT DISTINCT Name,
+CASE WHEN StandardCost = 0 or StandardCost is NULL
+     THEN 'Not for sale'
+     WHEN StandardCost BETWEEN 0 and 100 
+     THEN '<100$'
+     WHEN StandardCost BETWEEN 100 and 500 
+     THEN '<500$'
+     ELSE '>=500$'
+     END PriceRange
+     FROM Production.Product
+
+/*b)Найти ProductID, BusinessEntityID и имя поставщика продукции из Purchasing.ProductVendor и Purchasing.Vendor, где StandardPrice больше $10. 
+Также в имени вендора должна присутствовать (вне зависимости от положения) буква X или имя должно начинаться на букву N.*/
+
+USE AdventureWorks2017
+SELECT pv.ProductID, pv.BusinessEntityID, p.Name
+FROM Purchasing.ProductVendor AS pv 
+JOIN Purchasing.Vendor AS p		
+ON pv.BusinessEntityID=p.BusinessEntityID
+WHERE StandardPrice>10 AND (Name LIKE '%X%' or Name LIKE 'N%')
+
+/*c)Найти имена всех вендоров, продукция которых не продавалась за всё время. Необходимо использовать следующую схему соединения таблиц Purchasing.ProductVendor и Purchasing.Vendor */
+
+USE AdventureWorks2017
+SELECT p.Name
+FROM Purchasing.Vendor AS p 
+LEFT JOIN Purchasing.ProductVendor as pv 
+ON pv.BusinessEntityID=p.BusinessEntityID
+WHERE pv.BusinessEntityID is NULL
+
+3.Решить следующие задачи для тестовой базы данных: 
+
+а)Найдите производителей, препараты которых не продавались в 2019 году (подсказка: для выделения года из даты надо использовать одну из функций для работы с датами). 
+
+SELECT Name
+FROM FarmCompany AS P1
+JOIN Medicine AS P2 
+ON P1.Id=P2.Id, 
+JOIN Sales AS P3
+ON P2.Id=P3.Id 
+JOIN СashReciept AS P4 ON P3=P4
+WHERE YEAR(Date) != '2019'
+
+
+b)Выведите увеличенную в 2 раза цену препаратов типа А.  
+
+SELECT p1.Price*2 AS Double_price
+FROM Medicine AS p1 
+JOIN FarmType AS p2 
+ON p1.id=p2.id
+WHERE p2.Type = 'А'
+
+
+c)Найдите производителей и кол-во фармпрепаратов для кажого из них, где препарат не относится к типу А. 
+
+SELECT f1.Name, COUNT (f2.Drugs)
+FROM FarmCompany as f1 
+JOIN Medicine AS f2 
+ON f1.id=f2.id 
+JOIN FarmType AS f3
+ON f2.id=f3.id
+WHERE f3.Type != 'A'and f3.Type is NOT NULL
+ORDER BY f1.Name
+
+d) Вывести название аптеки и названия фармпрепаратов, которые в ней продавались по субботам. 
+
+SELECT f1.Name, f3.PharmacyName
+FROM Medicine AS f1
+JOIN Sales AS f2
+ON f1.id_Drugs=f2.id_Drugs
+JOIN CashCheck as f3
+ON f3.id_Check=f2.id_Check 
+JOIN PharmacyPoint as f4
+ON f3.id_Point=f4.id_Point
+WHERE DATENAME (dw,DATE)= 'Saturday'
