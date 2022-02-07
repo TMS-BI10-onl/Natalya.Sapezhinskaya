@@ -1,0 +1,24 @@
+Well done!
+
+3.
+a) -1
+Correct answer:
+
+SELECT Название
+FROM Фирмы-производители 
+WHERE id NOT IN (SELECT преп.id_фирмы
+				FROM Фармпрепараты преп
+						JOIN Продажи прод ON преп.id=прод.id_фармпрепарата
+						JOIN Кассовые_чеки чек ON прод.id_чека=чек.id 
+				WHERE YEAR(Дата)=2019)
+
+c) -1
+You forgot the group by.
+Also, there were no requirements about "type is not null".
+
+d) -0.5
+Subquery
+
+Mark: 7-2=5
++2 for task 4
+7
