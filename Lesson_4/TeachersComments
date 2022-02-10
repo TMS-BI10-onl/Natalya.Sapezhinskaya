@@ -1,0 +1,10 @@
+Well done!
+
+4.
+a) -0.5
+There was a word "DISTINCT names". You should use COUNT(DISTINCT). In this case the final number is correct, but it's just an occasion.
+
+g)-1
+This solution is not working for other months. I've tested for the Jan 2022 and May 2022. It's always returning just the first day if the month.
+
+Mark: 9
