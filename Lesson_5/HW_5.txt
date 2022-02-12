@@ -1,0 +1,75 @@
+/* 6.В базе данных AdventureWorks2017 создать таблицу Patients для ведения наблюдений за температурой пациентов больницы. Таблица должна содержать поля: 
+ID – числовое поле. Авто заполняется. 
+FirstName – имя пациента. 
+LastName – фамилия пациента. 
+SSN – уникальный идентификатор пациента. 
+Email – электронная почта пациента. Формируется по следующему правилу: первая большая буква FirstName + маленькие 3 буквы LastName + @mail.com (например, Akli@mail.com). Полезная ссылка здесь.  
+Temp – температура пациента. 
+CreatedDate — дата измерений.*/
+
+CREATE TABLE Patients
+(
+ID        int IDENTITY (1,1),
+FirstName NVARCHAR(70),
+LastName  NVARCHAR(100),
+SSN        uniqueidentifier DEFAULT NEWID(),
+Email     AS CONCAT(UPPER(LEFT(FirstName,1)),LOWER(LEFT(LastName,3)),'@mail.com'),
+Temp      numeric (3,1) CHECK (Temp <45),
+CreatedDate DATE
+)
+
+SELECT*FROM Patients
+
+
+/*7.Добавить в таблицу несколько произвольных записей.  */
+
+INSERT INTO dbo.Patients (FirstName,LastName, Temp, CreatedDate)
+VALUES
+('Ivan','Petrov','36.6','2018-01-01'),
+('Natalya','Sidorova','36.9','2019-06-09'),
+('Maria','Sheyko','37.2','2020-11-23'),
+('Pavel','Krezo','38.9','2021-08-15'),
+('Konstantin','Frolov','39.0','2022-01-07')
+
+--SELECT*FROM Patients
+
+/*8.Добавить поле TempType со следующими значениями ‘< 0°C’,  ‘> 0°C’ на основе значений из поля Temp ( используйте ALTER TABLE ADD column AS ). Посмотрите на данные, которые получились. */
+
+ALTER TABLE Patients
+ADD TempType AS 
+(CASE 
+      WHEN Temp>=0 THEN '>0' 
+      WHEN Temp<0 THEN '<0' 
+	  END)
+ALTER TABLE Patients
+DROP Column TempType
+
+/*9.Создать представление Patients_v, показывающее температуру в градусах Фаренгейта (°F = °Cx9/5 + 32) */
+
+CREATE VIEW Patients_v AS
+SELECT ID, FirstName,LastName,SSN,Email, Temp*9/5+32 as TempF, CreatedDate
+FROM Patients
+
+-- SELECT* FROM Patients_v
+
+/*10. Создать функцию, которая возвращает температуру в градусах Фаренгейта, при подаче на вход градусы в Цельсиях. */
+
+CREATE FUNCTION dbo.TempF (@TempF numeric (3,1))
+RETURNS numeric (3,1) 
+AS
+BEGIN
+RETURN 	@TempF*9/5+32
+END
+
+SELECT dbo.tempF (36.6) as TempFResult
+
+/*11.Перепишите решение задачи g из прошлого дз с использованием переменной, максимально упрощая select. */
+
+DECLARE @date DATETIME
+SET @date = DATEPART (dd,GETDATE())
+SELECT 
+CASE WHEN DATEPART(DW, DATEADD(DAY, 1, EOMONTH(GETDATE(), -1)))<=5 
+        THEN DATEADD(DAY, 1, EOMONTH(GETDATE(), -1))
+    ELSE DATEADD(DAY, (7-DATEPART(DW, DATEADD(DAY, 1, EOMONTH(GETDATE(), -1)))+1), DATEADD(DAY, 1, EOMONTH(GETDATE(), -1))) 
+END FirstWorkingDay	
+
