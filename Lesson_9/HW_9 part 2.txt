@@ -1,0 +1,29 @@
+
+CREATE TABLE People
+(
+ID INT PRIMARY KEY,
+FirstName NVARCHAR(50),
+ParentName NVARCHAR(50),
+LastName NVARCHAR(50),
+ID_Father INT,
+ID_Mother  INT
+)
+
+INSERT INTO [dbo].[People]  (ID, FirstName, ParentName, LastName,  ID_Father, ID_Mother) VALUES
+
+( 1, N'Алексей', N'Иван',N'Петров', 13,2),
+( 3, N'Дмитрий', N'Андрей',N'Маркарян', 13,4),
+( 5, N'Олег', N'Мартин',N'Иванов', 13,6),
+( 7, N'Дмитрий', N'Иван',N'Эрн', 1,8),
+( 9, N'Наталья', N'Александр',N'Сидоров', 15,10),
+( 11, N'Елена', N'Геннадий',N'Крезо', 15,12),
+( 13, N'Дмитрий', N'Максим',N'Курт', NULL,14),
+( 15, N'Дмитрий', N'Борис',N'Луговой', 13,16);
+
+
+
+SELECT p1.FirstName, p1.ParentName, p1.LastName, 
+        CONCAT(LEFT(p1.LastName, 1), LEFT(p1.FirstName, 1), LEFT(p1.ParentName, 1)) as ФИО, 
+		CONCAT(LEFT(p2.LastName, 1), LEFT(p2.FirstName, 1), LEFT(p2.ParentName, 1)) as ФИО отца
+FROM People p1 LEFT JOIN People p2 ON p1.ID_Father = p2.ID
+WHERE p1.FirstName = N'Дмитрий'
