@@ -1,0 +1,46 @@
+--Задачи 
+/*1) Найдите людей и их номера телефонов, код города которых начинается на  4 и заканчивается на 5.
+( таблицы Person.PersonPhone, Person.Person) */
+
+SELECT CONCAT([LastName], ' ',[MiddleName], ' ', [FirstName]) as FIO, [PhoneNumber]
+  FROM [Person].[Person] Person
+  JOIN [Person].[PersonPhone] PersonPhone ON Person.[BusinessEntityID] = PersonPhone.[BusinessEntityID]
+  WHERE [PhoneNumber] LIKE ('4_5%')
+
+/*2) Отнести каждого человека из [HumanResources].[Employee] в свою возрастную категорию:
+Adolescence: 17-20
+Adults: 21-59
+Elderly: 60-75
+Senile: 76-90*/
+
+SELECT CONCAT([LastName], ' ',[MiddleName], ' ', [FirstName]) as FIO, [BirthDate],
+       FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) as Age,
+  CASE WHEN FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) > 20 AND FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) < 59
+  THEN 'Adults'
+  WHEN FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) > 59 AND FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) < 75
+  THEN 'Elderly'
+  WHEN FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) > 75
+  THEN 'Sinele'
+  ELSE 'Adolescence'
+  END Category
+  FROM [Person].[Person] Person
+  JOIN [HumanResources].[Employee] Employee ON Person.[BusinessEntityID] = Employee.[BusinessEntityID]
+  WHERE FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) BETWEEN 17 AND 90
+  ORDER BY [BirthDate]
+
+
+/*3) Вывести самый дорогой продукт для каждого цвета из [Production].[Product]*/
+
+SELECT DISTINCT p1.[Name], p1.[Color], p1.[StandardCost]
+  FROM [Production].[Product] p1
+  WHERE [StandardCost] IN  (SELECT DISTINCT MAX([StandardCost]) FROM [Production].[Product] p WHERE p.Color = p1.Color GROUP BY Color)
+
+/*4) Темы:  20 Больница*/
+
+/*1.Врачи: ID врача, ФИО, должность, специализация, стаж работы, адрес, телефон.
+2.Болезни - ID болезни, название заболевания, рекомендации по лечению, меры профилактики.
+3.Пациенты – ID пациента, ФИО, адрес, телефон, страховой полис, паспорт.
+4.Диагноз - ID диагноза, пациент, заболевание, лечащий врач, дата обращения, дата выздоровления.
+5.Отделения: ID отделения, название отделения, заведующий, количество койкомест
+6.Лекарства: ID лекарства, название, описание
+7.Прием больных: ID посещения, ФИО пациента, диагноз, запись о поступлении,номер стахового полиса, жалобы, обследования, лечащий врач*/
