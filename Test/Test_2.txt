@@ -13,20 +13,14 @@ Adults: 21-59
 Elderly: 60-75
 Senile: 76-90*/
 
-SELECT CONCAT([LastName], ' ',[MiddleName], ' ', [FirstName]) as FIO, [BirthDate],
-       FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) as Age,
-  CASE WHEN FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) > 20 AND FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) < 59
-  THEN 'Adults'
-  WHEN FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) > 59 AND FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) < 75
-  THEN 'Elderly'
-  WHEN FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) > 75
-  THEN 'Sinele'
-  ELSE 'Adolescence'
-  END Category
-  FROM [Person].[Person] Person
-  JOIN [HumanResources].[Employee] Employee ON Person.[BusinessEntityID] = Employee.[BusinessEntityID]
-  WHERE FLOOR(DATEDIFF(DAY, [BirthDate], DATEADD(month, 3, GETDATE())) / 365.25) BETWEEN 17 AND 90
-  ORDER BY [BirthDate]
+SELECT [BusinessEntityID], [BirthDate], (DATEPART(yy,GETDATE())-DATEPART(yy,[BirthDate])) AS Year,
+ CASE 
+	WHEN (DATEPART(yy,GETDATE())-DATEPART(yy,[BirthDate])) BETWEEN 17 AND 20 THEN 'Adolescence'
+	WHEN (DATEPART(yy,GETDATE())-DATEPART(yy,[BirthDate])) BETWEEN 21 AND 59 THEN 'Adults'
+	WHEN (DATEPART(yy,GETDATE())-DATEPART(yy,[BirthDate])) BETWEEN 60 AND 75 THEN 'Elderly'
+	WHEN (DATEPART(yy,GETDATE())-DATEPART(yy,[BirthDate])) BETWEEN 76 AND 90 THEN 'Senile'
+END
+FROM [HumanResources].[Employee]
 
 
 /*3) Вывести самый дорогой продукт для каждого цвета из [Production].[Product]*/
@@ -37,10 +31,15 @@ SELECT DISTINCT p1.[Name], p1.[Color], p1.[StandardCost]
 
 /*4) Темы:  20 Больница*/
 
-/*1.Врачи: ID врача, ФИО, должность, специализация, стаж работы, адрес, телефон.
+1.Врачи: ID врача, ФИО, должность, специализация, стаж работы, адрес, телефон.
 2.Болезни - ID болезни, название заболевания, рекомендации по лечению, меры профилактики.
 3.Пациенты – ID пациента, ФИО, адрес, телефон, страховой полис, паспорт.
-4.Диагноз - ID диагноза, пациент, заболевание, лечащий врач, дата обращения, дата выздоровления.
+4.Диагноз - ID диагноза, ID лекарства.
 5.Отделения: ID отделения, название отделения, заведующий, количество койкомест
-6.Лекарства: ID лекарства, название, описание
-7.Прием больных: ID посещения, ФИО пациента, диагноз, запись о поступлении,номер стахового полиса, жалобы, обследования, лечащий врач*/
+6.Лекарства: ID лекарства, название, описание, срок годности
+8.Прием больных: ID посещения, ФИО пациента, диагноз, название отделения,номер стахового полиса, жалобы, обследования, лечащий врач,дата обращения, дата выписки*/
+
+
+1. Найти максимальное количество занятых койкомест по отделениям в каждом месяце
+2. Найти больных, которые повторно обратились в больницу в течении прошлого года
+3. Найти пациентов, которые поступили в прошлом месяце по возрасту (до 18 лет - дети, от 18 до 60 лет - взрослые, свыше 60 - пожилые)
