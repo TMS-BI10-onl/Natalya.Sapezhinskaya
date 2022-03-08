@@ -1,0 +1,89 @@
+CREATE TABLE TargetTable
+(
+[Function_name] NVARCHAR (100),
+[Function_count] INT 
+)
+
+
+MERGE TargetTable AS Target 
+USING (SELECT a FROM data_for_merge) AS Result_A 
+ON target.Function_name=Result_A.a
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_A.a IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_A.a,1);
+    
+MERGE TargetTable AS Target 
+USING (SELECT b FROM data_for_merge) AS Result_B
+ON target.Function_name=Result_B.b
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_B.b IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_B.b,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT c FROM data_for_merge) AS Result_C
+ON target.Function_name=Result_C.c
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_C.c IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_C.c,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT d FROM data_for_merge) AS Result_D
+ON target.Function_name=Result_D.d
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_D.d IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_D.d,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT e FROM data_for_merge) AS Result_E
+ON target.Function_name=Result_E.e
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_E.e IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_E.e,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT f FROM data_for_merge) AS Result_F
+ON target.Function_name=Result_F.f
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_F.f IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_F.f,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT g FROM data_for_merge) AS Result_G
+ON target.Function_name=Result_G.g
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_G.g IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_G.g,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT h FROM data_for_merge) AS Result_H
+ON target.Function_name=Result_H.h
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_H.h IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_H.h,1);
+
+MERGE TargetTable AS Target 
+USING (SELECT i FROM data_for_merge) AS Result_I
+ON target.Function_name=Result_I.i
+WHEN MATCHED 
+     THEN UPDATE SET target.Function_count=target.Function_count+1
+WHEN NOT MATCHED and Result_I.i IS NOT NULL	THEN
+ INSERT (Function_name, Function_count)
+	 VALUES (Result_I.i,1);
+
+SELECT * FROM TargetTable
