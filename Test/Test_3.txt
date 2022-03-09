@@ -1,0 +1,39 @@
+1. Какой процент мужчин от общего числа гостей, забронировало одноместные номера на одни сутки за прошлый год?
+
+SELECT 100 *
+(SELECT  COUNT (1)
+FROM Booking
+LEFT JOIN Guests
+ON Guests.ID_Guests=Booking.ID_Guests
+LEFT JOIN Rooms
+ON Booking.ID_room=Rooms.ID_room
+WHERE YEAR(CheckOutDate)= YEAR (DATEADD ( year,-1, GETDATE())) and Type = 'Single' and DATEDIFF (day,CheckInDate,CheckOutDate) = '1' and SEX = 'M')
+/
+(SELECT  COUNT (1)
+FROM Booking
+LEFT JOIN Guests
+ON Guests.ID_Guests=Booking.ID_Guests
+LEFT JOIN Rooms
+ON Booking.ID_room=Rooms.ID_room
+WHERE YEAR(CheckOutDate)= YEAR (DATEADD ( year,-1, GETDATE())) and Type = 'Single' and DATEDIFF (day,CheckInDate,CheckOutDate) = '1') as Persantage
+
+2. Найти среднюю выручку для разных типов номеров по годам. Вывести в виде транспонированной таблицы.
+
+
+SELECT YEAR, [Single],[Double], [King] 
+FROM
+(SELECT ServiceName, 
+        YEAR (Service_Date) AS YEAR, 
+		AVG(PRICE*AMOUNT) OVER (PARTITION BY YEAR (Service_Date)) as avg_revenue
+FROM 
+CheckServices
+LEFT JOIN Services
+ON CheckServices.ID_Service=Services.ID_Service
+LEFT JOIN Guests
+ON CheckServices.ID_Guest=Guests.ID_Guests) AS Source
+
+PIVOT 
+( 
+SUM (avg_revenue)
+ FOR  ServiceName IN ([Single],[Double], [King] ) 
+) as PivotTable
