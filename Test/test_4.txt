@@ -1,0 +1,73 @@
+1.	Написать запрос на добавление в таблицу manufacturer нового производителя HP из Америки.
+
+      INSERT INTO manufacturer (name, country_id)
+      VALUES('HP', 4)
+
+2.	Написать запрос, благодаря которому возраст пользователя Андрей в таблице user уменьшится в 3 раза.
+
+     UPDATE user
+     SET age=age/3
+     WHERE name = N'Андрей'
+
+3.	Найти название продукта с максимальной ценой.
+
+      --1--
+
+      SELECT name
+      FROM product
+      WHERE max_price = (SELECT MAX(price) FROM product)
+
+      --2--
+
+      SELECT name
+      FROM 
+      (SELECT name, MAX (price) OVER () as max_price
+       FROM product) a
+      WHERE price=max_price
+      
+      --3--
+
+     SELECT	name
+     FROM
+     (SELECT Name,
+		RANK() OVER (GROUP BY name ORDER BY price DESC) rank
+     FROM Product) a
+     WHERE rank=1
+
+     --4--
+ 
+     SELECT TOP 1 WITH Ties Name
+     FROM product
+     ORDER BY price DESC
+
+4.	Написать запрос на выборку всех пользователей с телефонами, начинающимися на 3 и заканчивающимися на 4, либо с возрастом > 35.
+       
+      SELECT user.name as user, phone.name as phonumber, user.age as age
+      FROM user user
+      FULL JOIN phone phone 
+      ON 
+      user.id = phone.user_id
+      WHERE age > 25 OR phone.name LIKE '+3%4'
+      
+
+5.	Найти топ 5 пользователей, кто купил больше всего продуктов.
+
+      --1--
+
+      SELECT user.name
+      FROM (
+      SELECT user.name, row_number() over (order by COUNT(product_id) desc) as row
+      FROM user user 
+      JOIN order order ON user.id = order.user_id
+      JOIN product product order.product_id  = product.id
+      )
+      WHERE  row BETWEEN 1 AND 5
+
+      --2--
+
+      SELECT TOP 5 user.name, COUNT(product_id) as purchase
+      FROM user user 
+      JOIN order order ON user.id = order.user_id
+      JOIN product product order.product_id  = product.id
+      GROUP BY user.name
+      ORDER BY COUNT(product_id) DESC
