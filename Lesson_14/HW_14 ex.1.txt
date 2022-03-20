@@ -1,0 +1,26 @@
+--1.	Для своей базы данных создайте объект для нахождения общего рейтинга топ 50 продавцов за всю историю продаж, 
+где рейтинг определяется количеством баллов за количество продаж в день (10 и более продаж – 3 балла, 5-10 – 2 балла, меньше 5 – 1 балл). 
+
+
+CREATE VIEW Top50SalesPerson
+AS
+WITH RatingDaily AS
+(SELECT       sp.[SalespersonID],
+              sp.[FirstName],
+              sp.[LastName],
+              ord.[OrderDate],
+			  COUNT (1) as cnt_orders,
+CASE WHEN COUNT(1)<5 THEN 1
+     WHEN COUNT(1) BETWEEN 5 AND 9 THEN 2
+	 WHEN COUNT(1)>=10 THEN 3
+	 END rating
+			  FROM [dbo].[Order] ord
+			  LEFT JOIN [dbo].[Salesperson] sp ON ord.[SalespersonID]=sp.[SalespersonID]
+GROUP BY sp.[SalespersonID], sp.[SalespersonID], sp.[FirstName],sp.[LastName],ord.[OrderDate])
+
+SELECT TOP 50 WITH TIES  [FirstName], [LastName], SUM (rating) as top_rnk
+FROM RatingDaily
+GROUP BY [FirstName], [LastName]
+ORDER BY top_rnk DESC
+
+SELECT * FROM [dbo].[Top50SalesPerson] 
