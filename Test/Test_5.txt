@@ -1,0 +1,84 @@
+1. Найти ProductSubcategoryID из Production.Product, где мин вес такого ProductSubcategoryID больше 150. 
+
+SELECT ProductSubcategoryID, MIN(Weight)
+FROM Production.Product
+GROUP BY ProductSubcategoryID
+HAVING MIN(Weight)>150
+
+2. Найти самый дорогой продукт (поле StandardCost) из Production.Product. (4 способа)
+
+--1--
+
+SELECT Name, StandardCost
+FROM Production.Product
+WHERE StandardCost=(SELECT MAX(StandardCost) FROM Production.Product)
+
+--2--
+
+SELECT Name, t.StandardCost
+FROM
+(SELECT Name, StandardCost,
+		RANK() OVER (ORDER BY StandardCost DESC) rank
+FROM Production.Product) t
+WHERE rank=1
+
+--3--
+
+SELECT TOP 1 WITH TIES Name,StandardCost
+FROM Production.Product
+ORDER BY StandartCost DESC
+
+--4--
+
+SELECT Name, StandardCost
+FROM 
+(
+SELECT Name, MAX(StandardCost) OVER () AS max_cost
+FROM Production.Product) a
+WHERE StandardCost=max_cost
+
+
+3. Найти страны, в которые за последний год не было куплено ни одного тура. (схема GROUP2)
+
+SELECT DISTINCT Country
+FROM ToursDim
+WHERE Country NOT IN 
+(
+    SELECT DISTINCT Tours.Country
+    FROM ToursDim Tours
+      LEFT JOIN SalesFct Sales
+      ON Tours.IDTour = Sales.IDTour
+    WHERE 
+      Sales.DataSales > DATEADD(year,-1,GETDATE())
+)
+
+
+4. Найти для каждого менеджера кол-во продаж за последние 15 лет.  (схема GROUP2)
+
+SELECT DISTINCT m.FirstName,m.LastName, COUNT(1) as sold_tours
+FROM SalesFct s LEFT JOIN ManagersDim m ON s.IDManager=m.IDManager
+WHERE YEAR(DataSales) BETWEEN DATEADD(year,-15,GETDATE()) AND YEAR(GETDATE())
+GROUP BY  m.FirstName,m.LastName
+
+
+5. 
+Users (
+    id bigint NOT NULL,
+    email varchar(255) NOT NULL
+);
+
+Notifications (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    category varchar(100),
+    is_read boolean DEFAULT false
+);
+
+Найти список категорий для пользователя alex@gmail.com, в которых более 50 непрочитанных нотификаций
+
+SELECT category, COUNT(is_read)
+FROM Notifications a
+JOIN Users b ON a.user_id = b.user_id
+WHERE a.email = 'alex@gmail.com' AND b.is_read = 0
+GROUP BY category
+HAVING COUNT(is_read)>50
