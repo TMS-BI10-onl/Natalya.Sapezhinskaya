@@ -1,0 +1,12 @@
+Well done!
+
+No negative comments, great job!
+
+Mark: 10
+
+Test notes: 
+KPI Number of films - it should be count(distinct) - then the number will be correct.
+Also, it was mentioned that it needed to be one page with 2 views.
+What is a better filter for last 25 years: create a filter by release_date (not release date year), select relative date filtering and then type "in the last 25 years".
+
+Test mark: 9
