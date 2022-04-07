@@ -1,0 +1,8 @@
+Well done!
+
+All is correct, but I have a proposition about filter-buttons. 
+It's not really a good way to create a whole new page for filtered graphs.
+With gender we can leave it as it is.
+But for age category: you can simply replace these shapes with horizontal filter - it will look totally the same. To do so, create a filter by age category, go to format -> visual -> slicer settings -> options -> orientation:horizontal.
+
+Mark: 10-3=7
